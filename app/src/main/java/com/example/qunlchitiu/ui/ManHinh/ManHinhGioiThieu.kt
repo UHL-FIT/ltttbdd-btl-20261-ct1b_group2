@@ -79,9 +79,9 @@ fun ManHinhGioiThieu(navController: NavController) {
                         style = MaterialTheme.typography.titleMedium
                     )
                     Spacer(modifier = Modifier.height(8.dp))
-                    Text("1. [Họ tên SV 1] - [MSSV]")
-                    Text("2. [Họ tên SV 2] - [MSSV]")
-                    Text("3. [Họ tên SV 3] - [MSSV]")
+                    Text("1. Nguyễn Văn A - 21110001")
+                    Text("2. Trần Thị B - 21110002")
+                    Text("3. Lê Văn C - 21110003")
                 }
             }
 

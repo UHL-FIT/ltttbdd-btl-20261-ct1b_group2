@@ -132,7 +132,7 @@ fun ManHinhNhacNho(navController: NavController, viewModel: DieuKhienTaiChinh) {
                             viewModel.deleteReminder(editingReminder!!)
                             showDialog = false
                         }) {
-                            Text("Xóa", color = Color.Red)
+                            Text("Xóa", color = MaterialTheme.colorScheme.error)
                         }
                     }
                     TextButton(onClick = { showDialog = false }) { Text("Hủy") }
@@ -150,7 +150,7 @@ fun ReminderItem(reminder: NhacNho, onTogglePaid: () -> Unit, onClick: () -> Uni
         onClick = onClick,
         modifier = Modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(
-            containerColor = if (reminder.isPaid) Color.LightGray.copy(alpha = 0.2f) else Color.White
+            containerColor = if (reminder.isPaid) MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f) else MaterialTheme.colorScheme.surface
         )
     ) {
         Row(
@@ -166,10 +166,10 @@ fun ReminderItem(reminder: NhacNho, onTogglePaid: () -> Unit, onClick: () -> Uni
                         fontWeight = FontWeight.Bold,
                         style = if (reminder.isPaid) MaterialTheme.typography.bodyLarge.copy(textDecoration = androidx.compose.ui.text.style.TextDecoration.LineThrough) else MaterialTheme.typography.bodyLarge
                     )
-                    Text("Hạn: ${dateFormatter.format(Date(reminder.dueDate))}", fontSize = 12.sp, color = Color.Gray)
+                    Text("Hạn: ${dateFormatter.format(Date(reminder.dueDate))}", fontSize = 12.sp, color = MaterialTheme.colorScheme.outline)
                 }
             }
-            Text(formatCurrency(reminder.amount), fontWeight = FontWeight.Bold, color = if (reminder.isPaid) Color.Gray else Color.Red)
+            Text(formatCurrency(reminder.amount), fontWeight = FontWeight.Bold, color = if (reminder.isPaid) MaterialTheme.colorScheme.outline else MaterialTheme.colorScheme.error)
         }
     }
 }

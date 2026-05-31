@@ -45,17 +45,17 @@ fun ManHinhMucTieu(navController: NavController, viewModel: DieuKhienTaiChinh) {
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = Color(0xFF00796B),
-                    titleContentColor = Color.White,
-                    navigationIconContentColor = Color.White
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    titleContentColor = MaterialTheme.colorScheme.onPrimary,
+                    navigationIconContentColor = MaterialTheme.colorScheme.onPrimary
                 )
             )
         },
         floatingActionButton = {
             FloatingActionButton(
                 onClick = { showAddGoalDialog = true },
-                containerColor = Color(0xFF00796B),
-                contentColor = Color.White
+                containerColor = MaterialTheme.colorScheme.primaryContainer,
+                contentColor = MaterialTheme.colorScheme.onPrimaryContainer
             ) {
                 Icon(Icons.Default.Add, contentDescription = "Add Goal")
             }
@@ -75,16 +75,16 @@ fun ManHinhMucTieu(navController: NavController, viewModel: DieuKhienTaiChinh) {
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
-                .background(Color(0xFFF5F5F5))
+                .background(MaterialTheme.colorScheme.background)
         ) {
             if (goals.isEmpty()) {
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        Icon(Icons.Default.Savings, contentDescription = null, modifier = Modifier.size(100.dp), tint = Color.LightGray)
+                        Icon(Icons.Default.Savings, contentDescription = null, modifier = Modifier.size(100.dp), tint = MaterialTheme.colorScheme.outline.copy(alpha = 0.5f))
                         Spacer(Modifier.height(16.dp))
-                        Text("Chưa có mục tiêu nào", color = Color.Gray)
+                        Text("Chưa có mục tiêu nào", color = MaterialTheme.colorScheme.outline)
                         TextButton(onClick = { showAddGoalDialog = true }) {
-                            Text("Thêm ngay", color = Color(0xFF00796B))
+                            Text("Thêm ngay", color = MaterialTheme.colorScheme.primary)
                         }
                     }
                 }
@@ -161,15 +161,15 @@ fun SavingsGoalCard(goal: MucTieuTietKiem, onAddMoney: (Double) -> Unit, onDelet
     }
 
     Card(
-        modifier = Modifier.fillMaxWidth().clickable { showEditDialog = true },
+        modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp).clickable { showEditDialog = true },
         shape = RoundedCornerShape(20.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White),
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ) {
         Column(modifier = Modifier.padding(20.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Surface(
-                    color = Color(0xFFE0F2F1),
+                    color = MaterialTheme.colorScheme.primaryContainer,
                     shape = CircleShape,
                     modifier = Modifier.size(56.dp)
                 ) {
@@ -179,15 +179,15 @@ fun SavingsGoalCard(goal: MucTieuTietKiem, onAddMoney: (Double) -> Unit, onDelet
                 }
                 Spacer(Modifier.width(16.dp))
                 Column(modifier = Modifier.weight(1f)) {
-                    Text(goal.name, fontWeight = FontWeight.ExtraBold, fontSize = 20.sp, color = Color(0xFF004D40))
+                    Text(goal.name, fontWeight = FontWeight.ExtraBold, fontSize = 20.sp, color = MaterialTheme.colorScheme.primary)
                     Text(
                         "Còn $daysRemaining ngày • Hạn: ${SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(Date(goal.targetDate))}", 
-                        color = Color.Gray, 
+                        color = MaterialTheme.colorScheme.outline, 
                         fontSize = 12.sp
                     )
                 }
                 IconButton(onClick = onDelete) {
-                    Icon(Icons.Default.DeleteOutline, contentDescription = "Delete", tint = Color.LightGray)
+                    Icon(Icons.Default.DeleteOutline, contentDescription = "Delete", tint = MaterialTheme.colorScheme.outline.copy(alpha = 0.5f))
                 }
             }
             
@@ -201,11 +201,11 @@ fun SavingsGoalCard(goal: MucTieuTietKiem, onAddMoney: (Double) -> Unit, onDelet
                         .weight(1f)
                         .height(12.dp)
                         .clip(RoundedCornerShape(6.dp)),
-                    color = Color(0xFF00796B),
-                    trackColor = Color(0xFFEEEEEE)
+                    color = MaterialTheme.colorScheme.primary,
+                    trackColor = MaterialTheme.colorScheme.surfaceVariant
                 )
                 Spacer(Modifier.width(12.dp))
-                Text("$percent%", fontWeight = FontWeight.Bold, color = Color(0xFF00796B))
+                Text("$percent%", fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.primary)
             }
             
             Spacer(Modifier.height(16.dp))
@@ -216,11 +216,11 @@ fun SavingsGoalCard(goal: MucTieuTietKiem, onAddMoney: (Double) -> Unit, onDelet
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 StatItem("Đã có", formatCurrency(goal.currentAmount), Color(0xFF2E7D32))
-                StatItem("Mục tiêu", formatCurrency(goal.targetAmount), Color.Black)
-                StatItem("Còn lại", formatCurrency(remainingAmount), Color.Red)
+                StatItem("Mục tiêu", formatCurrency(goal.targetAmount), MaterialTheme.colorScheme.onSurface)
+                StatItem("Còn lại", formatCurrency(remainingAmount), MaterialTheme.colorScheme.error)
             }
             
-            HorizontalDivider(modifier = Modifier.padding(vertical = 16.dp), thickness = 0.5.dp, color = Color(0xFFEEEEEE))
+            HorizontalDivider(modifier = Modifier.padding(vertical = 16.dp), thickness = 0.5.dp, color = MaterialTheme.colorScheme.outlineVariant)
             
             // Suggestion & Quick Actions
             Row(
@@ -229,8 +229,8 @@ fun SavingsGoalCard(goal: MucTieuTietKiem, onAddMoney: (Double) -> Unit, onDelet
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Column {
-                    Text("Tiết kiệm định kỳ", fontSize = 11.sp, color = Color.Gray)
-                    Text("${formatCurrency(monthlySuggestion)}/tháng", fontWeight = FontWeight.Bold, fontSize = 14.sp, color = Color(0xFF00796B))
+                    Text("Tiết kiệm định kỳ", fontSize = 11.sp, color = MaterialTheme.colorScheme.outline)
+                    Text("${formatCurrency(monthlySuggestion)}/tháng", fontWeight = FontWeight.Bold, fontSize = 14.sp, color = MaterialTheme.colorScheme.primary)
                 }
                 
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -240,9 +240,9 @@ fun SavingsGoalCard(goal: MucTieuTietKiem, onAddMoney: (Double) -> Unit, onDelet
                             isDeposit = false
                             showAddMoneyDialog = true 
                         },
-                        modifier = Modifier.background(Color(0xFFFBE9E7), CircleShape).size(36.dp)
+                        modifier = Modifier.background(MaterialTheme.colorScheme.errorContainer, CircleShape).size(36.dp)
                     ) {
-                        Icon(Icons.Default.Remove, contentDescription = "Withdraw", tint = Color.Red, modifier = Modifier.size(20.dp))
+                        Icon(Icons.Default.Remove, contentDescription = "Withdraw", tint = MaterialTheme.colorScheme.error, modifier = Modifier.size(20.dp))
                     }
                     
                     // Deposit Button
@@ -251,9 +251,9 @@ fun SavingsGoalCard(goal: MucTieuTietKiem, onAddMoney: (Double) -> Unit, onDelet
                             isDeposit = true
                             showAddMoneyDialog = true 
                         },
-                        modifier = Modifier.background(Color(0xFFE0F2F1), CircleShape).size(36.dp)
+                        modifier = Modifier.background(MaterialTheme.colorScheme.primaryContainer, CircleShape).size(36.dp)
                     ) {
-                        Icon(Icons.Default.Add, contentDescription = "Deposit", tint = Color(0xFF00796B), modifier = Modifier.size(20.dp))
+                        Icon(Icons.Default.Add, contentDescription = "Deposit", tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(20.dp))
                     }
                 }
             }
@@ -328,9 +328,9 @@ fun AddGoalDialog(
                     items(icons) { item ->
                         Surface(
                             onClick = { icon = item },
-                            color = if (icon == item) Color(0xFFE0F2F1) else Color.Transparent,
+                            color = if (icon == item) MaterialTheme.colorScheme.primaryContainer else Color.Transparent,
                             shape = CircleShape,
-                            border = if (icon == item) androidx.compose.foundation.BorderStroke(2.dp, Color(0xFF00796B)) else null
+                            border = if (icon == item) androidx.compose.foundation.BorderStroke(2.dp, MaterialTheme.colorScheme.primary) else null
                         ) {
                             Text(item, modifier = Modifier.padding(12.dp), fontSize = 24.sp)
                         }
@@ -347,8 +347,8 @@ fun AddGoalDialog(
                     OutlinedButton(
                         onClick = onDelete,
                         modifier = Modifier.weight(1f),
-                        colors = ButtonDefaults.outlinedButtonColors(contentColor = Color.Red),
-                        border = androidx.compose.foundation.BorderStroke(1.dp, Color.Red)
+                        colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colorScheme.error),
+                        border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.error)
                     ) {
                         Text("XÓA")
                     }
@@ -360,14 +360,14 @@ fun AddGoalDialog(
                         onConfirm(name, target.toDoubleOrNull() ?: 0.0, icon, targetTime) 
                     },
                     modifier = Modifier.weight(1f),
-                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF00796B))
+                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
                 ) {
                     Text(if (onDelete != null) "CẬP NHẬT" else "TẠO MỤC TIÊU")
                 }
             }
         },
         dismissButton = {
-            TextButton(onClick = onDismiss, modifier = Modifier.fillMaxWidth()) { Text("HỦY", color = Color.Gray) }
+            TextButton(onClick = onDismiss, modifier = Modifier.fillMaxWidth()) { Text("HỦY", color = MaterialTheme.colorScheme.outline) }
         }
     )
 }

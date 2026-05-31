@@ -6,6 +6,8 @@ import android.widget.Toast
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.qunlchitiu.data.CoSoDuLieu
+import com.example.qunlchitiu.data.TaiChinhRepository
+import com.example.qunlchitiu.data.TiGiaService
 import com.example.qunlchitiu.model.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -32,8 +34,18 @@ data class ThongKeNganSach(
 
 enum class CheDoXem { DAY, WEEK, MONTH, YEAR, SEVEN_DAYS, FOURTEEN_DAYS }
 
+sealed class UIState<out T> {
+    object Loading : UIState<Nothing>()
+    data class Success<T>(val data: T) : UIState<T>()
+    data class Error(val message: String) : UIState<Nothing>()
+}
+
 class DieuKhienTaiChinh(application: Application) : AndroidViewModel(application) {
     private val dao = CoSoDuLieu.getDatabase(application).expenseDao()
+    private val repository = TaiChinhRepository(dao, TiGiaService.create())
+
+    private val _tiGiaState = MutableStateFlow<UIState<ResponseTiGia>>(UIState.Loading)
+    val tiGiaState: StateFlow<UIState<ResponseTiGia>> = _tiGiaState
 
     private val _selectedDate = MutableStateFlow(Calendar.getInstance())
     val selectedDate: StateFlow<Calendar> = _selectedDate
@@ -61,6 +73,19 @@ class DieuKhienTaiChinh(application: Application) : AndroidViewModel(application
 
     init {
         seedDefaultCategories()
+        fetchExchangeRates()
+    }
+
+    fun fetchExchangeRates() {
+        viewModelScope.launch {
+            _tiGiaState.value = UIState.Loading
+            try {
+                val result = repository.getExchangeRates()
+                _tiGiaState.value = UIState.Success(result)
+            } catch (e: Exception) {
+                _tiGiaState.value = UIState.Error("Không thể tải tỷ giá: ${e.message}")
+            }
+        }
     }
 
     private fun seedDefaultCategories() {

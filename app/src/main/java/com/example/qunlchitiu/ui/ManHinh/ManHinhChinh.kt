@@ -28,6 +28,7 @@ import androidx.navigation.NavController
 import com.example.qunlchitiu.model.*
 import com.example.qunlchitiu.viewmodel.DieuKhienTaiChinh
 import com.example.qunlchitiu.viewmodel.CheDoXem
+import com.example.qunlchitiu.viewmodel.UIState
 import java.text.NumberFormat
 import java.text.SimpleDateFormat
 import java.util.*
@@ -97,6 +98,7 @@ fun ManHinhChinh(navController: NavController, viewModel: DieuKhienTaiChinh) {
     val currentBudget by viewModel.currentBudget.collectAsState()
     val savingsGoals by viewModel.savingsGoals.collectAsState()
     val reminders by viewModel.reminders.collectAsState()
+    val tiGiaState by viewModel.tiGiaState.collectAsState()
     
     var showModeDialog by remember { mutableStateOf(false) }
     var showBudgetDialog by remember { mutableStateOf(false) }
@@ -205,7 +207,7 @@ fun ManHinhChinh(navController: NavController, viewModel: DieuKhienTaiChinh) {
             CenterAlignedTopAppBar(
                 title = {
                     Surface(
-                        color = Color(0xFF6750A4),
+                        color = MaterialTheme.colorScheme.primary,
                         shape = RoundedCornerShape(20.dp),
                         modifier = Modifier
                             .padding(vertical = 4.dp)
@@ -216,26 +218,26 @@ fun ManHinhChinh(navController: NavController, viewModel: DieuKhienTaiChinh) {
                             modifier = Modifier.padding(horizontal = 12.dp, vertical = 4.dp)
                         ) {
                             IconButton(onClick = { viewModel.moveDate(-1) }, modifier = Modifier.size(24.dp)) {
-                                Icon(Icons.AutoMirrored.Filled.KeyboardArrowLeft, contentDescription = null, tint = Color.White)
+                                Icon(Icons.AutoMirrored.Filled.KeyboardArrowLeft, contentDescription = null, tint = MaterialTheme.colorScheme.onPrimary)
                             }
                             Spacer(Modifier.width(8.dp))
-                            Text(dateDisplay, color = Color.White, fontSize = 16.sp)
-                            Icon(Icons.Default.ArrowDropDown, contentDescription = null, tint = Color.White)
+                            Text(dateDisplay, color = MaterialTheme.colorScheme.onPrimary, fontSize = 16.sp)
+                            Icon(Icons.Default.ArrowDropDown, contentDescription = null, tint = MaterialTheme.colorScheme.onPrimary)
                             Spacer(Modifier.width(8.dp))
                             IconButton(onClick = { viewModel.moveDate(1) }, modifier = Modifier.size(24.dp)) {
-                                Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, contentDescription = null, tint = Color.White)
+                                Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, contentDescription = null, tint = MaterialTheme.colorScheme.onPrimary)
                             }
                         }
                     }
                 },
                 navigationIcon = {
                     IconButton(onClick = { navController.navigate("about") }) {
-                        Icon(Icons.Default.Settings, contentDescription = "Settings", tint = Color.Gray)
+                        Icon(Icons.Default.Info, contentDescription = "About", tint = MaterialTheme.colorScheme.onSurfaceVariant)
                     }
                 },
                 actions = {
-                    IconButton(onClick = { /* Notifications */ }) {
-                        Icon(Icons.Default.Notifications, contentDescription = "Notifications", tint = Color(0xFFD4AF37))
+                    IconButton(onClick = { viewModel.fetchExchangeRates() }) {
+                        Icon(Icons.Default.Refresh, contentDescription = "Refresh Rates", tint = MaterialTheme.colorScheme.primary)
                     }
                 }
             )
@@ -248,7 +250,7 @@ fun ManHinhChinh(navController: NavController, viewModel: DieuKhienTaiChinh) {
             modifier = Modifier
                 .padding(padding)
                 .fillMaxSize()
-                .background(Color(0xFFFBF8FF)),
+                .background(MaterialTheme.colorScheme.background),
             contentPadding = PaddingValues(bottom = 100.dp)
         ) {
             item {
@@ -281,6 +283,10 @@ fun ManHinhChinh(navController: NavController, viewModel: DieuKhienTaiChinh) {
                 SectionHeader("Giao dịch", "Xem tất cả") {
                     navController.navigate("transactions")
                 }
+                
+                // Tỉ giá hối đoái (REST API)
+                TiGiaSection(tiGiaState)
+
                 if (expenses.isEmpty()) {
                     EmptyTransactions()
                 }
@@ -324,15 +330,20 @@ fun BalanceHeader(balance: Double, count: Int) {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
+            text = "Số dư hiện tại",
+            style = MaterialTheme.typography.titleMedium,
+            color = MaterialTheme.colorScheme.secondary
+        )
+        Text(
             text = (if (balance >= 0) "+" else "") + formatCurrency(balance),
-            fontSize = 32.sp,
+            style = MaterialTheme.typography.headlineLarge,
             fontWeight = FontWeight.Bold,
             color = if (balance >= 0) Color(0xFF4CAF50) else Color(0xFFE91E63)
         )
         Text(
             text = "$count giao dịch",
-            color = Color.Gray,
-            fontSize = 14.sp
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.outline
         )
     }
 }
@@ -604,6 +615,50 @@ fun ExpenseItem(expense: GiaoDich, icon: String, onClick: () -> Unit, onDelete: 
 }
 
 @Composable
+fun TiGiaSection(state: UIState<ResponseTiGia>) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+        shape = RoundedCornerShape(16.dp)
+    ) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            Text("Tỷ giá hôm nay (OpenER-API)", fontWeight = FontWeight.Bold, fontSize = 16.sp, color = MaterialTheme.colorScheme.primary)
+            Spacer(Modifier.height(8.dp))
+            
+            when (state) {
+                is UIState.Loading -> Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) { 
+                    CircularProgressIndicator(modifier = Modifier.size(24.dp)) 
+                }
+                is UIState.Success -> {
+                    val rates = state.data.rates
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        TiGiaItem("USD", rates["USD"] ?: 0.0)
+                        TiGiaItem("EUR", rates["EUR"] ?: 0.0)
+                        TiGiaItem("JPY", rates["JPY"] ?: 0.0)
+                    }
+                }
+                is UIState.Error -> Text(state.message, color = MaterialTheme.colorScheme.error, fontSize = 12.sp)
+            }
+        }
+    }
+}
+
+@Composable
+fun TiGiaItem(symbol: String, rate: Double) {
+    val vndRate = if (rate > 0) 1.0 / rate else 0.0
+    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        Text(symbol, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.secondary)
+        Text(formatCurrency(vndRate), fontSize = 14.sp, color = MaterialTheme.colorScheme.onSurface)
+    }
+}
+
+@Composable
 fun BottomActionButtons(navController: NavController) {
     Row(
         modifier = Modifier
@@ -615,7 +670,7 @@ fun BottomActionButtons(navController: NavController) {
         Button(
             onClick = { navController.navigate("add_expense?isIncome=true&expenseId=-1") },
             modifier = Modifier.weight(1f).height(56.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF5E4B8B)),
+            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
             shape = RoundedCornerShape(28.dp)
         ) {
             Text("Thêm thu nhập", fontSize = 14.sp, fontWeight = FontWeight.Bold)
@@ -624,7 +679,7 @@ fun BottomActionButtons(navController: NavController) {
         Button(
             onClick = { navController.navigate("add_expense?isIncome=false&expenseId=-1") },
             modifier = Modifier.weight(1f).height(56.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF5E4B8B)),
+            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
             shape = RoundedCornerShape(28.dp)
         ) {
             Text("Thêm chi tiêu", fontSize = 14.sp, fontWeight = FontWeight.Bold)

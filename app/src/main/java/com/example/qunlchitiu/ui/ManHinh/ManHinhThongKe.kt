@@ -30,9 +30,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.PathMeasure
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -61,25 +63,22 @@ fun ManHinhThongKe(navController: NavController, viewModel: DieuKhienTaiChinh, i
     val totalAmount = if (isIncomeMode) stats.totalIncome else stats.totalExpense
 
     Scaffold(
-        containerColor = Color(0xFF121212),
+        containerColor = MaterialTheme.colorScheme.background,
         topBar = {
             CenterAlignedTopAppBar(
-                title = { Text("Phân tích", color = Color.White, fontWeight = FontWeight.Bold) },
+                title = { Text("Phân tích", color = MaterialTheme.colorScheme.onSurface, fontWeight = FontWeight.Bold) },
                 navigationIcon = {
                     IconButton(onClick = { navController.popBackStack() }) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back", tint = Color.White)
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back", tint = MaterialTheme.colorScheme.onSurface)
                     }
                 },
                 actions = {
                     // Nút xuất báo cáo CSV chuyên nghiệp
                     IconButton(onClick = { exportTransactionsToCSV(context, expenses) }) {
-                        Icon(Icons.Default.FileDownload, contentDescription = "Xuất CSV", tint = Color(0xFFD4E157))
-                    }
-                    IconButton(onClick = { navController.popBackStack() }) {
-                        Icon(Icons.Default.Close, contentDescription = "Close", tint = Color.White)
+                        Icon(Icons.Default.FileDownload, contentDescription = "Xuất CSV", tint = MaterialTheme.colorScheme.primary)
                     }
                 },
-                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = Color(0xFF121212))
+                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = MaterialTheme.colorScheme.surface)
             )
         }
     ) { padding ->
@@ -104,7 +103,7 @@ fun ManHinhThongKe(navController: NavController, viewModel: DieuKhienTaiChinh, i
                 Spacer(Modifier.height(16.dp))
 
                 Row(
-                    modifier = Modifier.fillMaxWidth().height(48.dp).clip(RoundedCornerShape(24.dp)).background(Color(0xFF1E1E1E)),
+                    modifier = Modifier.fillMaxWidth().height(48.dp).clip(RoundedCornerShape(24.dp)).background(MaterialTheme.colorScheme.surfaceVariant),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Box(
@@ -112,22 +111,22 @@ fun ManHinhThongKe(navController: NavController, viewModel: DieuKhienTaiChinh, i
                             .weight(1f)
                             .fillMaxHeight()
                             .clip(RoundedCornerShape(24.dp))
-                            .background(if (isTrendMode) Color(0xFF2D2D2D) else Color.Transparent)
+                            .background(if (isTrendMode) MaterialTheme.colorScheme.primary else Color.Transparent)
                             .clickable { isTrendMode = true },
                         contentAlignment = Alignment.Center
                     ) {
-                        Text("📈 Xu hướng", color = if (isTrendMode) Color(0xFFD4E157) else Color.Gray, fontWeight = if (isTrendMode) FontWeight.Bold else FontWeight.Normal)
+                        Text("📈 Xu hướng", color = if (isTrendMode) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurfaceVariant, fontWeight = if (isTrendMode) FontWeight.Bold else FontWeight.Normal)
                     }
                     Box(
                         modifier = Modifier
                             .weight(1f)
                             .fillMaxHeight()
                             .clip(RoundedCornerShape(24.dp))
-                            .background(if (!isTrendMode) Color(0xFF2D2D2D) else Color.Transparent)
+                            .background(if (!isTrendMode) MaterialTheme.colorScheme.primary else Color.Transparent)
                             .clickable { isTrendMode = false },
                         contentAlignment = Alignment.Center
                     ) {
-                        Text("📊 Danh mục", color = if (!isTrendMode) Color(0xFFD4E157) else Color.Gray, fontWeight = if (!isTrendMode) FontWeight.Bold else FontWeight.Normal)
+                        Text("📊 Danh mục", color = if (!isTrendMode) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurfaceVariant, fontWeight = if (!isTrendMode) FontWeight.Bold else FontWeight.Normal)
                     }
                 }
                 Spacer(Modifier.height(16.dp))
@@ -146,30 +145,30 @@ fun ManHinhThongKe(navController: NavController, viewModel: DieuKhienTaiChinh, i
             } else {
                 item {
                     Row(
-                        modifier = Modifier.fillMaxWidth().height(48.dp).clip(RoundedCornerShape(24.dp)).background(Color(0xFF1E1E1E)).padding(4.dp),
+                        modifier = Modifier.fillMaxWidth().height(48.dp).clip(RoundedCornerShape(24.dp)).background(MaterialTheme.colorScheme.surfaceVariant).padding(4.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Box(modifier = Modifier.weight(1f).fillMaxHeight().clip(RoundedCornerShape(20.dp)).background(if (isIncomeMode) Color(0xFFD4E157).copy(alpha = 0.2f) else Color.Transparent).clickable { isIncomeMode = true }, contentAlignment = Alignment.Center) {
-                            Text("↘ Thu nhập", color = if (isIncomeMode) Color(0xFFD4E157) else Color.Gray)
+                        Box(modifier = Modifier.weight(1f).fillMaxHeight().clip(RoundedCornerShape(20.dp)).background(if (isIncomeMode) MaterialTheme.colorScheme.primaryContainer else Color.Transparent).clickable { isIncomeMode = true }, contentAlignment = Alignment.Center) {
+                            Text("↘ Thu nhập", color = if (isIncomeMode) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurfaceVariant)
                         }
-                        Box(modifier = Modifier.weight(1f).fillMaxHeight().clip(RoundedCornerShape(20.dp)).background(if (!isIncomeMode) Color(0xFFD4E157).copy(alpha = 0.2f) else Color.Transparent).clickable { isIncomeMode = false }, contentAlignment = Alignment.Center) {
-                            Text("↗ Chi tiêu", color = if (!isIncomeMode) Color(0xFFD4E157) else Color.Gray)
+                        Box(modifier = Modifier.weight(1f).fillMaxHeight().clip(RoundedCornerShape(20.dp)).background(if (!isIncomeMode) MaterialTheme.colorScheme.primaryContainer else Color.Transparent).clickable { isIncomeMode = false }, contentAlignment = Alignment.Center) {
+                            Text("↗ Chi tiêu", color = if (!isIncomeMode) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurfaceVariant)
                         }
                     }
                     Spacer(Modifier.height(32.dp))
                     Box(contentAlignment = Alignment.Center, modifier = Modifier.size(220.dp)) {
                         PieChart(data = currentStats, total = totalAmount)
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                            Text("Tổng cộng", color = Color.Gray, fontSize = 14.sp)
-                            Text(formatCurrency(totalAmount), color = Color(0xFFD4E157), fontWeight = FontWeight.Bold, fontSize = 18.sp)
+                            Text("Tổng cộng", color = MaterialTheme.colorScheme.outline, fontSize = 14.sp)
+                            Text(formatCurrency(totalAmount), color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.Bold, fontSize = 18.sp)
                         }
                     }
                     Spacer(Modifier.height(32.dp))
-                    Text("Phân tích theo danh mục", modifier = Modifier.fillMaxWidth(), color = Color.White, fontWeight = FontWeight.Bold, fontSize = 18.sp)
+                    Text("Phân tích theo danh mục", modifier = Modifier.fillMaxWidth(), color = MaterialTheme.colorScheme.onSurface, fontWeight = FontWeight.Bold, fontSize = 18.sp)
                     Spacer(Modifier.height(16.dp))
                 }
                 if (currentStats.isEmpty()) {
-                    item { Text("Chưa có dữ liệu", color = Color.Gray, modifier = Modifier.padding(32.dp)) }
+                    item { Text("Chưa có dữ liệu", color = MaterialTheme.colorScheme.outline, modifier = Modifier.padding(32.dp)) }
                 }
                 items(currentStats.toList().sortedByDescending { it.second }) { (category, amount) ->
                     val icon = allCategories.find { it.name == category }?.icon ?: "📦"
@@ -178,7 +177,6 @@ fun ManHinhThongKe(navController: NavController, viewModel: DieuKhienTaiChinh, i
             }
             item { Spacer(Modifier.height(32.dp)) }
         }
-        //hy
     }
 }
 
@@ -194,20 +192,20 @@ fun TrendContent(income: Double, expense: Double, balance: Double, expenses: Lis
         
         Spacer(Modifier.height(24.dp))
         Row(verticalAlignment = Alignment.CenterVertically) {
-            Icon(Icons.AutoMirrored.Filled.ShowChart, null, tint = Color.Gray, modifier = Modifier.size(20.dp))
+            Icon(Icons.AutoMirrored.Filled.ShowChart, null, tint = MaterialTheme.colorScheme.outline, modifier = Modifier.size(20.dp))
             Spacer(Modifier.width(8.dp))
-            Text("Xu hướng tài chính", color = Color.White, fontWeight = FontWeight.Bold, fontSize = 18.sp)
+            Text("Xu hướng tài chính", color = MaterialTheme.colorScheme.onBackground, fontWeight = FontWeight.Bold, fontSize = 18.sp)
         }
         
         Spacer(Modifier.height(8.dp))
         Row(verticalAlignment = Alignment.CenterVertically) {
             Box(modifier = Modifier.size(10.dp).clip(CircleShape).background(Color(0xFFE53935)))
             Spacer(Modifier.width(6.dp))
-            Text("Chi tiêu", color = Color.Gray, fontSize = 12.sp)
+            Text("Chi tiêu", color = MaterialTheme.colorScheme.outline, fontSize = 12.sp)
             Spacer(Modifier.width(20.dp))
             Box(modifier = Modifier.size(10.dp).clip(CircleShape).background(Color(0xFF43A047)))
             Spacer(Modifier.width(6.dp))
-            Text("Thu nhập", color = Color.Gray, fontSize = 12.sp)
+            Text("Thu nhập", color = MaterialTheme.colorScheme.outline, fontSize = 12.sp)
         }
         Spacer(Modifier.height(20.dp))
         TrendLineChart(expenses = expenses, viewMode = viewMode)
@@ -218,6 +216,18 @@ fun TrendContent(income: Double, expense: Double, balance: Double, expenses: Lis
 fun TrendLineChart(expenses: List<GiaoDich>, viewMode: CheDoXem) {
     var selectedIndex by remember { mutableIntStateOf(-1) }
     val animationProgress = remember { Animatable(0f) }
+
+    val density = LocalDensity.current
+    val outlineColor = MaterialTheme.colorScheme.outline
+    val backgroundColor = MaterialTheme.colorScheme.background
+    val onBackgroundColor = MaterialTheme.colorScheme.onBackground
+    
+    val labelPaddingPx = with(density) { 45.dp.toPx() }
+    val chartBottomPaddingPx = with(density) { 40.dp.toPx() }
+    val gridStrokeWidthPx = with(density) { 1.dp.toPx() }
+    val lineStrokeWidthPx = with(density) { 3.dp.toPx() }
+    val circleRadiusPx = with(density) { 3.dp.toPx() }
+    val innerCircleRadiusPx = with(density) { 1.2.dp.toPx() }
 
     LaunchedEffect(expenses, viewMode) {
         animationProgress.snapTo(0f)
@@ -277,10 +287,9 @@ fun TrendLineChart(expenses: List<GiaoDich>, viewMode: CheDoXem) {
         Canvas(modifier = Modifier.fillMaxSize().pointerInput(Unit) {
             detectTapGestures(
                 onPress = { offset ->
-                    val labelPadding = 45.dp.toPx()
-                    val chartWidth = size.width - labelPadding
+                    val chartWidth = size.width - labelPaddingPx
                     val spacing = chartWidth / (incomePoints.size - 1).coerceAtLeast(1)
-                    val index = ((offset.x - labelPadding + spacing / 2) / spacing).toInt().coerceIn(0, incomePoints.size - 1)
+                    val index = ((offset.x - labelPaddingPx + spacing / 2) / spacing).toInt().coerceIn(0, incomePoints.size - 1)
                     selectedIndex = index
                     tryAwaitRelease()
                     selectedIndex = -1
@@ -289,23 +298,22 @@ fun TrendLineChart(expenses: List<GiaoDich>, viewMode: CheDoXem) {
         }) {
             val maxData = (incomePoints + expensePoints).maxOrNull()?.coerceAtLeast(1000f) ?: 1000f
             val maxAmount = if (maxData > 1000000) (kotlin.math.ceil(maxData / 5000000.0) * 5000000.0).toFloat() else maxData.coerceAtLeast(1000f)
-            val labelPadding = 45.dp.toPx()
-            val chartWidth = size.width - labelPadding
-            val chartHeight = size.height - 40.dp.toPx()
+            val chartWidth = size.width - labelPaddingPx
+            val chartHeight = size.height - chartBottomPaddingPx
             val spacing = chartWidth / (incomePoints.size - 1).coerceAtLeast(1)
 
             val paint = android.graphics.Paint().apply { color = android.graphics.Color.GRAY; textSize = 26f; textAlign = android.graphics.Paint.Align.LEFT }
             for (i in 0..4) {
                 val y = chartHeight - (i * chartHeight / 4)
                 val value = i * maxAmount / 4
-                drawLine(Color.Gray.copy(alpha = 0.1f), androidx.compose.ui.geometry.Offset(labelPadding, y), androidx.compose.ui.geometry.Offset(size.width, y), 1.dp.toPx())
+                drawLine(outlineColor.copy(alpha = 0.1f), androidx.compose.ui.geometry.Offset(labelPaddingPx, y), androidx.compose.ui.geometry.Offset(size.width, y), gridStrokeWidthPx)
                 val labelY = if (value >= 1_000_000) String.format(Locale.getDefault(), "%.0fM", value / 1_000_000) else if (value >= 1000) String.format(Locale.getDefault(), "%.0fK", value / 1000) else "0"
                 drawContext.canvas.nativeCanvas.drawText(labelY, 5f, y + 10f, paint)
             }
 
             fun drawTrendLine(points: List<Float>, color: Color) {
                 if (points.isEmpty()) return
-                val pathPoints = points.mapIndexed { index, value -> androidx.compose.ui.geometry.Offset(labelPadding + index * spacing, chartHeight - (value / maxAmount * chartHeight)) }
+                val pathPoints = points.mapIndexed { index, value -> androidx.compose.ui.geometry.Offset(labelPaddingPx + index * spacing, chartHeight - (value / maxAmount * chartHeight)) }
                 val strokePath = androidx.compose.ui.graphics.Path().apply {
                     moveTo(pathPoints[0].x, pathPoints[0].y)
                     for (i in 0 until pathPoints.size - 1) {
@@ -320,12 +328,12 @@ fun TrendLineChart(expenses: List<GiaoDich>, viewMode: CheDoXem) {
                     getSegment(0f, length * animationProgress.value, partialPath, true)
                 }
 
-                drawPath(partialPath, color, style = Stroke(width = 3.dp.toPx(), cap = StrokeCap.Round))
+                drawPath(partialPath, color, style = Stroke(width = lineStrokeWidthPx, cap = StrokeCap.Round))
                 
                 if (animationProgress.value >= 1f) {
                     val fillPath = androidx.compose.ui.graphics.Path().apply { addPath(strokePath); lineTo(pathPoints.last().x, chartHeight); lineTo(pathPoints.first().x, chartHeight); close() }
                     drawPath(fillPath, androidx.compose.ui.graphics.Brush.verticalGradient(listOf(color.copy(alpha = 0.15f), Color.Transparent), startY = pathPoints.minOf { it.y }, endY = chartHeight))
-                    pathPoints.forEach { drawCircle(color, radius = 3.dp.toPx(), center = it); drawCircle(Color(0xFF121212), radius = 1.2.dp.toPx(), center = it) }
+                    pathPoints.forEach { drawCircle(color, radius = circleRadiusPx, center = it); drawCircle(backgroundColor, radius = innerCircleRadiusPx, center = it) }
                 }
             }
 
@@ -333,17 +341,17 @@ fun TrendLineChart(expenses: List<GiaoDich>, viewMode: CheDoXem) {
             drawTrendLine(expensePoints, Color(0xFFE53935))
 
             if (selectedIndex != -1) {
-                val x = labelPadding + selectedIndex * spacing
-                drawLine(Color.White.copy(alpha = 0.5f), androidx.compose.ui.geometry.Offset(x, 0f), androidx.compose.ui.geometry.Offset(x, chartHeight), 1.dp.toPx())
+                val x = labelPaddingPx + selectedIndex * spacing
+                drawLine(onBackgroundColor.copy(alpha = 0.5f), androidx.compose.ui.geometry.Offset(x, 0f), androidx.compose.ui.geometry.Offset(x, chartHeight), gridStrokeWidthPx)
                 val inVal = incomePoints[selectedIndex]
                 val exVal = expensePoints[selectedIndex]
                 val tooltipText = "T: ${formatCurrencyShort(inVal.toDouble())} | C: ${formatCurrencyShort(exVal.toDouble())}"
-                paint.apply { color = android.graphics.Color.WHITE; textAlign = android.graphics.Paint.Align.CENTER; textSize = 30f; isFakeBoldText = true }
+                paint.apply { color = if (backgroundColor.luminance() > 0.5) android.graphics.Color.BLACK else android.graphics.Color.WHITE; textAlign = android.graphics.Paint.Align.CENTER; textSize = 30f; isFakeBoldText = true }
                 drawContext.canvas.nativeCanvas.drawText(tooltipText, x.coerceIn(100f, size.width - 100f), 40f, paint)
             }
 
             paint.apply { textAlign = android.graphics.Paint.Align.CENTER; color = android.graphics.Color.GRAY; isFakeBoldText = false; textSize = 26f }
-            xLabels.forEachIndexed { index, label -> if (label.isNotEmpty()) drawContext.canvas.nativeCanvas.drawText(label, labelPadding + index * spacing, size.height - 10f, paint) }
+            xLabels.forEachIndexed { index, label -> if (label.isNotEmpty()) drawContext.canvas.nativeCanvas.drawText(label, labelPaddingPx + index * spacing, size.height - 10f, paint) }
         }
     }
 }
@@ -356,11 +364,11 @@ fun formatCurrencyShort(amount: Double): String {
 
 @Composable
 fun TrendSummaryCard(label: String, amount: Double, color: Color, icon: androidx.compose.ui.graphics.vector.ImageVector, modifier: Modifier) {
-    Card(modifier = modifier, colors = CardDefaults.cardColors(containerColor = Color(0xFF1E1E1E)), shape = RoundedCornerShape(16.dp)) {
+    Card(modifier = modifier, colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface), shape = RoundedCornerShape(16.dp), elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)) {
         Column(modifier = Modifier.padding(16.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Icon(icon, null, tint = color.copy(alpha = 0.7f), modifier = Modifier.size(16.dp))
-                Spacer(Modifier.width(8.dp)); Text(label, color = Color.Gray, fontSize = 14.sp)
+                Spacer(Modifier.width(8.dp)); Text(label, color = MaterialTheme.colorScheme.outline, fontSize = 14.sp)
             }
             Spacer(Modifier.height(8.dp))
             Text(if (abs(amount) >= 1000000) String.format(Locale.getDefault(), "%.1fM ₫", amount / 1000000.0) else formatCurrency(amount), color = color, fontWeight = FontWeight.Bold, fontSize = 18.sp, maxLines = 1)
@@ -370,15 +378,16 @@ fun TrendSummaryCard(label: String, amount: Double, color: Color, icon: androidx
 
 @Composable
 fun TimeChip(label: String, selected: Boolean, onClick: () -> Unit) {
-    Surface(color = if (selected) Color(0xFFD4E157) else Color(0xFF1E1E1E), shape = RoundedCornerShape(16.dp), modifier = Modifier.padding(horizontal = 4.dp).clickable { onClick() }) {
-        Text(label, modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp), color = if (selected) Color.Black else Color.Gray, fontSize = 12.sp, fontWeight = if (selected) FontWeight.Bold else FontWeight.Normal)
+    Surface(color = if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceVariant, shape = RoundedCornerShape(16.dp), modifier = Modifier.padding(horizontal = 4.dp).clickable { onClick() }) {
+        Text(label, modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp), color = if (selected) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 12.sp, fontWeight = if (selected) FontWeight.Bold else FontWeight.Normal)
     }
 }
 
 @Composable
 fun PieChart(data: Map<String, Double>, total: Double) {
+    val outlineVariant = MaterialTheme.colorScheme.outlineVariant
     Canvas(modifier = Modifier.size(200.dp)) {
-        if (total <= 0) drawArc(Color.DarkGray, 0f, 360f, false, style = Stroke(40f))
+        if (total <= 0) drawArc(outlineVariant, 0f, 360f, false, style = Stroke(40f))
         else {
             var startAngle = -90f
             data.toList().sortedByDescending { it.second }.forEach { pair ->
@@ -392,17 +401,17 @@ fun PieChart(data: Map<String, Double>, total: Double) {
 
 @Composable
 fun CategoryDetailItem(category: String, amount: Double, total: Double, icon: String, color: Color) {
-    Card(modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp), colors = CardDefaults.cardColors(containerColor = Color(0xFF1E1E1E)), shape = RoundedCornerShape(16.dp)) {
+    Card(modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp), colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface), shape = RoundedCornerShape(16.dp)) {
         Row(modifier = Modifier.padding(16.dp), verticalAlignment = Alignment.CenterVertically) {
             Box(modifier = Modifier.size(12.dp).clip(CircleShape).background(color))
             Spacer(Modifier.width(12.dp))
-            Surface(color = Color(0xFF2D2D2D), shape = CircleShape, modifier = Modifier.size(40.dp)) { Box(contentAlignment = Alignment.Center) { Text(icon, fontSize = 20.sp) } }
+            Surface(color = MaterialTheme.colorScheme.surfaceVariant, shape = CircleShape, modifier = Modifier.size(40.dp)) { Box(contentAlignment = Alignment.Center) { Text(icon, fontSize = 20.sp) } }
             Spacer(Modifier.width(16.dp))
             Column(modifier = Modifier.weight(1f)) {
-                Text(category, color = Color.White, fontWeight = FontWeight.Medium)
-                Text(String.format(Locale.getDefault(), "%.2f%%", if (total > 0) (amount / total * 100) else 0.0), color = Color.Gray, fontSize = 12.sp)
+                Text(category, color = MaterialTheme.colorScheme.onSurface, fontWeight = FontWeight.Medium)
+                Text(String.format(Locale.getDefault(), "%.2f%%", if (total > 0) (amount / total * 100) else 0.0), color = MaterialTheme.colorScheme.outline, fontSize = 12.sp)
             }
-            Text(formatCurrency(amount), color = Color.White, fontWeight = FontWeight.Bold)
+            Text(formatCurrency(amount), color = MaterialTheme.colorScheme.onSurface, fontWeight = FontWeight.Bold)
         }
     }
 }

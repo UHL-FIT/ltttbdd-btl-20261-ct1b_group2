@@ -60,7 +60,7 @@ class MainActivity : FragmentActivity() {
                     BudgetBuddyApp()
                 } else {
                     LockScreen { showBiometricPrompt() }
-                }
+                }//abcde
             }
         }
         
