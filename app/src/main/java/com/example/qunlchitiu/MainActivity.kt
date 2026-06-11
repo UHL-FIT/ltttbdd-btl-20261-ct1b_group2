@@ -12,8 +12,16 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.BarChart
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.List
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -30,9 +38,12 @@ import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavDestination.Companion.hierarchy
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.qunlchitiu.ui.ManHinh.ManHinhGioiThieu
@@ -130,7 +141,56 @@ class MainActivity : FragmentActivity() {
         val navController = rememberNavController()
         val viewModel: DieuKhienTaiChinh = viewModel()
         
-        Scaffold { innerPadding ->
+        // Theo dõi màn hình hiện tại để làm sáng icon tương ứng
+        val navBackStackEntry by navController.currentBackStackEntryAsState()
+        val currentDestination = navBackStackEntry?.destination
+
+        Scaffold(
+            bottomBar = {
+                NavigationBar(
+                    containerColor = Color(0xFF1E1E1E), // Màu tối đồng bộ với theme
+                    contentColor = Color.White
+                ) {
+                    val items = listOf(
+                        Triple("Trang chủ", "home", Icons.Default.Home),
+                        Triple("Thống kê", "stats?isIncome=false", Icons.Default.BarChart),
+                        Triple("Giao dịch", "transactions", Icons.Default.List)
+                    )
+                    
+                    items.forEach { (label, route, icon) ->
+                        // Logic kiểm tra xem route này có đang được chọn không
+                        val isSelected = currentDestination?.hierarchy?.any { 
+                            it.route?.split("?")?.get(0) == route.split("?")?.get(0) 
+                        } == true
+
+                        NavigationBarItem(
+                            icon = { Icon(icon, contentDescription = label) },
+                            label = { Text(label, fontSize = 10.sp) },
+                            selected = isSelected,
+                            colors = NavigationBarItemDefaults.colors(
+                                selectedIconColor = Color(0xFFD4E157),
+                                selectedTextColor = Color(0xFFD4E157),
+                                unselectedIconColor = Color.Gray,
+                                unselectedTextColor = Color.Gray,
+                                indicatorColor = Color(0xFF2C2C2C)
+                            ),
+                            onClick = {
+                                navController.navigate(route) {
+                                    // Quay về trang chủ trước khi điều hướng để tránh chồng chéo backstack
+                                    popUpTo(navController.graph.findStartDestination().id) {
+                                        saveState = true
+                                    }
+                                    // Tránh tạo nhiều bản sao của cùng một màn hình
+                                    launchSingleTop = true
+                                    // Khôi phục trạng thái cũ khi quay lại
+                                    restoreState = true
+                                }
+                            }
+                        )
+                    }
+                }
+            }
+        ) { innerPadding ->
             NavHost(
                 navController = navController,
                 startDestination = "home",
