@@ -312,7 +312,7 @@ fun TrendLineChart(expenses: List<GiaoDich>, viewMode: CheDoXem) {
             }
 
             fun drawTrendLine(points: List<Float>, color: Color) {
-                if (points.isEmpty()) return
+                if (points.isEmpty()) return//Biểu đồ đường
                 val pathPoints = points.mapIndexed { index, value -> androidx.compose.ui.geometry.Offset(labelPaddingPx + index * spacing, chartHeight - (value / maxAmount * chartHeight)) }
                 val strokePath = androidx.compose.ui.graphics.Path().apply {
                     moveTo(pathPoints[0].x, pathPoints[0].y)
@@ -384,7 +384,7 @@ fun TimeChip(label: String, selected: Boolean, onClick: () -> Unit) {
 }
 
 @Composable
-fun PieChart(data: Map<String, Double>, total: Double) {
+fun PieChart(data: Map<String, Double>, total: Double) {//Biểu đồ tròn
     val outlineVariant = MaterialTheme.colorScheme.outlineVariant
     Canvas(modifier = Modifier.size(200.dp)) {
         if (total <= 0) drawArc(outlineVariant, 0f, 360f, false, style = Stroke(40f))

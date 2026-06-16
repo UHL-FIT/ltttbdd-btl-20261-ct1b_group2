@@ -164,11 +164,12 @@ class DieuKhienTaiChinh(application: Application) : AndroidViewModel(application
         }.sortedByDescending { it.date }
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
-    val stats: StateFlow<ThongKeNganSach> = expenses.map { list ->
+    val stats: StateFlow<ThongKeNganSach> = expenses.map { list ->//Biến stats có nhiệm vụ theo dõi dữ liệu giao dịch và tự động tính toán lại các thông số thống kê khi danh sách giao dịch thay đổi.
+        //Tổng
         val incomeList = list.filter { it.isIncome }
         val expenseList = list.filter { !it.isIncome }
         
-        val totalIncome = incomeList.sumOf { it.amount }
+        val totalIncome = incomeList.sumOf { it.amount }//Tính số dư
         val totalExpense = expenseList.sumOf { it.amount }
         
         val incomeSummaries = incomeList.groupBy { it.category }
@@ -323,7 +324,7 @@ class DieuKhienTaiChinh(application: Application) : AndroidViewModel(application
                 content.append("${it.id},${it.title},${it.amount},${it.category},$dateStr,${if(it.isIncome) "Thu" else "Chi"},${it.note}\n")
             }
             file.writeText(content.toString())
-            Toast.makeText(context, "Đã xuất file: ${file.absolutePath}", Toast.LENGTH_LONG).show()
+            Toast.makeText(context, "Đã xuất file: ${file.absolutePath}", Toast.LENGTH_LONG).show()//Thông báo thành công
         }
     }
 }

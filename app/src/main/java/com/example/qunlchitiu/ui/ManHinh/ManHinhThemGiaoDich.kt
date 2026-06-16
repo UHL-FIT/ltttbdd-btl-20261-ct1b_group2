@@ -133,13 +133,13 @@ fun ManHinhThemGiaoDich(
                     if (expenseId != -1 && existingExpense != null) {
                         OutlinedButton(
                             onClick = {
-                                viewModel.deleteExpense(existingExpense!!)
+                                viewModel.deleteExpense(existingExpense!!)//Xóa một giao dịch
                                 navController.popBackStack()
                             },
                             modifier = Modifier
                                 .weight(1f)
                                 .height(56.dp),
-                            colors = ButtonDefaults.outlinedButtonColors(contentColor = Color.Red),
+                            colors = ButtonDefaults.outlinedButtonColors(contentColor = Color.Red),//Màu
                             border = androidx.compose.foundation.BorderStroke(1.dp, Color.Red)
                         ) {
                             Text("Xóa", fontSize = 16.sp, fontWeight = FontWeight.Bold)
@@ -149,10 +149,10 @@ fun ManHinhThemGiaoDich(
                     Button(
                         onClick = {
                             val amountDouble = amount.toDoubleOrNull()
-                            if (title.isBlank() || amountDouble == null || amountDouble <= 0) {
+                            if (title.isBlank() || amountDouble == null || amountDouble <= 0) {//Kiểm tra tại chỗ
                                 // error handling
                             } else {
-                                if (expenseId != -1 && existingExpense != null) {
+                                if (expenseId != -1 && existingExpense != null) {//-1 là ở chế độ chỉnh sửa
                                     viewModel.updateTransaction(
                                         existingExpense!!.copy(
                                             title = title,
@@ -164,7 +164,7 @@ fun ManHinhThemGiaoDich(
                                     )
                                 } else {
                                     viewModel.addTransaction(title, amountDouble, categoryName, isIncome, selectedDate, note)
-                                }
+                                }//Lưu giao dịch
                                 navController.popBackStack()
                             }
                         },
@@ -205,7 +205,9 @@ fun ManHinhThemGiaoDich(
                 value = formatAmountInput(amount),
                 onValueChange = { 
                     val clean = it.filter { char -> char.isDigit() }
-                    amount = clean 
+                    if (clean.length <= 12) { // Giới hạn 12 chữ số (hàng trăm tỷ)
+                        amount = clean
+                    }
                 },
                 placeholder = { Text("0", fontSize = 48.sp) },
                 modifier = Modifier.fillMaxWidth(),
@@ -215,9 +217,22 @@ fun ManHinhThemGiaoDich(
                     focusedIndicatorColor = Color.Transparent,
                     unfocusedIndicatorColor = Color.Transparent
                 ),
-                textStyle = MaterialTheme.typography.displayMedium.copy(fontWeight = FontWeight.Bold),
+                textStyle = MaterialTheme.typography.displayMedium.copy(
+                    fontWeight = FontWeight.Bold,
+                    fontSize = if (amount.length > 8) 32.sp else 45.sp // Tự động giảm cỡ chữ khi số dài
+                ),
+                singleLine = true, // Ép trên 1 dòng
+                maxLines = 1,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                suffix = { Text("₫", style = MaterialTheme.typography.displayMedium.copy(fontWeight = FontWeight.Bold)) }
+                suffix = { 
+                    Text(
+                        "₫", 
+                        style = MaterialTheme.typography.displayMedium.copy(
+                            fontWeight = FontWeight.Bold,
+                            fontSize = if (amount.length > 8) 32.sp else 45.sp
+                        )
+                    ) 
+                }
             )
 
             Spacer(Modifier.height(16.dp))

@@ -60,7 +60,7 @@ fun ManHinhNganSach(navController: NavController, viewModel: DieuKhienTaiChinh) 
                     viewModel.setBudget(amount)
                     showBudgetDialog = false
                     budgetInput = ""
-                }) { Text("Lưu") }
+                }) { Text("Lưu") }//Lưu ngân sách tổng
             },
             dismissButton = {
                 TextButton(onClick = { showBudgetDialog = false }) { Text("Hủy") }
@@ -81,14 +81,14 @@ fun ManHinhNganSach(navController: NavController, viewModel: DieuKhienTaiChinh) 
         },
         floatingActionButton = {
             FloatingActionButton(onClick = { 
-                editingCategoryBudget = null
+                editingCategoryBudget = null//Biến lưu chỉnh sửa
                 showCategoryBudgetDialog = true 
             }) {
-                Icon(Icons.Default.Add, contentDescription = "Add Category Budget")
+                Icon(Icons.Default.Add, contentDescription = "Add Category Budget")//Dấu cộng
             }
         }
     ) { padding ->
-        LazyColumn(
+        LazyColumn(//lây zi ngân sách
             modifier = Modifier
                 .padding(padding)
                 .fillMaxSize()
@@ -104,7 +104,7 @@ fun ManHinhNganSach(navController: NavController, viewModel: DieuKhienTaiChinh) 
                         Text("Ngân sách tổng hàng tháng", fontWeight = FontWeight.Bold)
                         Spacer(Modifier.height(8.dp))
                         val limit = currentBudget?.limitAmount ?: 0.0
-                        val spent = stats.totalExpense
+                        val spent = stats.totalExpense//tổng tiền đã chi
                         val remaining = limit - spent
                         val progress = if (limit > 0) (spent / limit).coerceIn(0.0, 1.0) else 0.0
 
@@ -114,7 +114,7 @@ fun ManHinhNganSach(navController: NavController, viewModel: DieuKhienTaiChinh) 
                         }
                         
                         Spacer(Modifier.height(8.dp))
-                        LinearProgressIndicator(
+                        LinearProgressIndicator(// thanh tiến độ
                             progress = { progress.toFloat() },
                             modifier = Modifier.fillMaxWidth().height(12.dp),
                             color = if (progress > 0.9) Color.Red else MaterialTheme.colorScheme.primary,
@@ -225,19 +225,19 @@ fun ManHinhNganSach(navController: NavController, viewModel: DieuKhienTaiChinh) 
                         showCategoryBudgetDialog = false
                         amountStr = ""
                     }
-                }) { Text(if (editingCategoryBudget == null) "Lưu" else "Cập nhật") }
+                }) { Text(if (editingCategoryBudget == null) "Lưu" else "Cập nhật") }//Lưu ngân sách danh mục
             },
             dismissButton = {
                 Row {
                     if (editingCategoryBudget != null) {
                         TextButton(onClick = {
-                            viewModel.deleteCategoryBudget(editingCategoryBudget!!)
+                            viewModel.deleteCategoryBudget(editingCategoryBudget!!)//Xóa ngân sách danh mục
                             showCategoryBudgetDialog = false
                         }) {
                             Text("Xóa", color = Color.Red)
                         }
                     }
-                    TextButton(onClick = { showCategoryBudgetDialog = false }) { Text("Hủy") }
+                    TextButton(onClick = { showCategoryBudgetDialog = false }) { Text("Hủy") }//Hủy ngân sách giao dịch
                 }
             }
         )

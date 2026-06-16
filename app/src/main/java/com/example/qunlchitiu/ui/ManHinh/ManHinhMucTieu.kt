@@ -286,6 +286,8 @@ fun AddGoalDialog(
     var days by remember { mutableStateOf(initialDays) }
     var icon by remember { mutableStateOf(initialIcon) }
 
+    val isValid = name.isNotBlank() && (target.toDoubleOrNull() ?: 0.0) > 0
+
     AlertDialog(
         onDismissRequest = onDismiss,
         title = { Text(title, fontWeight = FontWeight.Bold) },
@@ -359,8 +361,11 @@ fun AddGoalDialog(
                         val targetTime = System.currentTimeMillis() + (days.toLongOrNull() ?: 30L) * 24 * 60 * 60 * 1000
                         onConfirm(name, target.toDoubleOrNull() ?: 0.0, icon, targetTime) 
                     },
+                    enabled = isValid,
                     modifier = Modifier.weight(1f),
-                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = if (isValid) MaterialTheme.colorScheme.primary else Color.Gray
+                    )
                 ) {
                     Text(if (onDelete != null) "CẬP NHẬT" else "TẠO MỤC TIÊU")
                 }

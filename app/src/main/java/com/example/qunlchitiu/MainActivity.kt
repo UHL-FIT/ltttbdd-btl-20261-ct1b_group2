@@ -216,7 +216,7 @@ class MainActivity : FragmentActivity() {
                     val expenseId = backStackEntry.arguments?.getInt("expenseId") ?: -1
                     ManHinhThemGiaoDich(navController, viewModel, isIncome, expenseId)
                 }
-                composable(
+                composable(//Nút thống kê
                     route = "stats?isIncome={isIncome}",
                     arguments = listOf(
                         navArgument("isIncome") {
@@ -275,5 +275,10 @@ class MainActivity : FragmentActivity() {
     override fun onStop() {
         super.onStop()
         Log.d(TAG, "onStop called")
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        Log.d(TAG, "onDestroy called")
     }
 }

@@ -63,7 +63,7 @@ fun ManHinhNhacNho(navController: NavController, viewModel: DieuKhienTaiChinh) {
                 items(reminders) { reminder ->
                     ReminderItem(
                         reminder = reminder,
-                        onTogglePaid = { viewModel.toggleReminderPaid(reminder) },
+                        onTogglePaid = { viewModel.toggleReminderPaid(reminder) },//Đánh dấu nhắc nhở
                         onClick = {
                             editingReminder = reminder
                             showDialog = true
@@ -117,7 +117,7 @@ fun ManHinhNhacNho(navController: NavController, viewModel: DieuKhienTaiChinh) {
                     val amount = amountStr.toDoubleOrNull() ?: 0.0
                     if (title.isNotEmpty() && amount > 0) {
                         if (editingReminder == null) {
-                            viewModel.addReminder(title, amount, selectedDate)
+                            viewModel.addReminder(title, amount, selectedDate)//Thêm nhắc nhở
                         } else {
                             viewModel.updateReminder(editingReminder!!.copy(title = title, amount = amount, dueDate = selectedDate))
                         }

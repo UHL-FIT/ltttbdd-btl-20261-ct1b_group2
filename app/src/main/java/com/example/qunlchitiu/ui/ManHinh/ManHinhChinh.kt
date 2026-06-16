@@ -163,7 +163,7 @@ fun ManHinhChinh(navController: NavController, viewModel: DieuKhienTaiChinh) {
             title = { Text("Chọn chế độ xem") },
             text = {
                 Column {
-                    ModeOption("Hàng ngày", viewMode == CheDoXem.DAY) { viewModel.setViewMode(CheDoXem.DAY); showModeDialog = false }
+                    ModeOption("Hàng ngày", viewMode == CheDoXem.DAY) { viewModel.setViewMode(CheDoXem.DAY); showModeDialog = false }//Chế độ xem lịch
                     ModeOption("Hàng tuần", viewMode == CheDoXem.WEEK) { viewModel.setViewMode(CheDoXem.WEEK); showModeDialog = false }
                     ModeOption("Hàng tháng", viewMode == CheDoXem.MONTH) { viewModel.setViewMode(CheDoXem.MONTH); showModeDialog = false }
                     ModeOption("Hàng năm", viewMode == CheDoXem.YEAR) { viewModel.setViewMode(CheDoXem.YEAR); showModeDialog = false }
@@ -185,7 +185,7 @@ fun ManHinhChinh(navController: NavController, viewModel: DieuKhienTaiChinh) {
                         }
                     }
                     TextButton(
-                        onClick = { viewModel.goToToday(); showModeDialog = false },
+                        onClick = { viewModel.goToToday(); showModeDialog = false },//Đi đến hôm nay
                         modifier = Modifier.fillMaxWidth()
                     ) {
                         Row(verticalAlignment = Alignment.CenterVertically) {
@@ -216,7 +216,7 @@ fun ManHinhChinh(navController: NavController, viewModel: DieuKhienTaiChinh) {
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
                             modifier = Modifier.padding(horizontal = 12.dp, vertical = 4.dp)
-                        ) {
+                        ) {//Lịch
                             IconButton(onClick = { viewModel.moveDate(-1) }, modifier = Modifier.size(24.dp)) {
                                 Icon(Icons.AutoMirrored.Filled.KeyboardArrowLeft, contentDescription = null, tint = MaterialTheme.colorScheme.onPrimary)
                             }
@@ -235,7 +235,7 @@ fun ManHinhChinh(navController: NavController, viewModel: DieuKhienTaiChinh) {
                         Icon(Icons.Default.Info, contentDescription = "About", tint = MaterialTheme.colorScheme.onSurfaceVariant)
                     }
                 },
-                actions = {
+                actions = {//nút làm mới
                     IconButton(onClick = { viewModel.fetchExchangeRates() }) {
                         Icon(Icons.Default.Refresh, contentDescription = "Refresh Rates", tint = MaterialTheme.colorScheme.primary)
                     }
@@ -299,7 +299,7 @@ fun ManHinhChinh(navController: NavController, viewModel: DieuKhienTaiChinh) {
                     onClick = {
                         navController.navigate("add_expense?isIncome=${expense.isIncome}&expenseId=${expense.id}")
                     },
-                    onDelete = { viewModel.deleteExpense(expense) }
+                    onDelete = { viewModel.deleteExpense(expense) }//Thùng rác
                 )
             }
         }
@@ -343,7 +343,7 @@ fun BalanceHeader(balance: Double, count: Int) {
         Text(
             text = "$count giao dịch",
             style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.outline
+            color = MaterialTheme.colorScheme.outline//Màu ô tiền
         )
     }
 }
@@ -359,7 +359,7 @@ fun IncomeExpenseCards(income: Double, expense: Double, onIncomeClick: () -> Uni
         SummaryCard(
             title = "Thu nhập",
             amount = income,
-            color = Color(0xFF4CAF50),
+            color = Color(0xFF4CAF51),
             modifier = Modifier.weight(1f),
             isIncome = true,
             onClick = onIncomeClick
