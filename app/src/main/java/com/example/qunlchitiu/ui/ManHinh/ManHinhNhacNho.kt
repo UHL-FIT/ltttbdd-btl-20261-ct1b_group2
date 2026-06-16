@@ -152,7 +152,7 @@ fun ReminderItem(reminder: NhacNho, onTogglePaid: () -> Unit, onClick: () -> Uni
         colors = CardDefaults.cardColors(
             containerColor = if (reminder.isPaid) MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f) else MaterialTheme.colorScheme.surface
         )
-    ) {
+    ) {//
         Row(
             modifier = Modifier.padding(16.dp),
             verticalAlignment = Alignment.CenterVertically,
