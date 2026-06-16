@@ -55,7 +55,7 @@ fun ManHinhNhacNho(navController: NavController, viewModel: DieuKhienTaiChinh) {
             Box(modifier = Modifier.fillMaxSize().padding(padding), contentAlignment = Alignment.Center) {
                 Text("Chưa có nhắc nhở nào", color = Color.Gray)
             }
-        } else {
+        } else {//ô
             LazyColumn(
                 modifier = Modifier.padding(padding).fillMaxSize().padding(16.dp),
                 verticalArrangement = Arrangement.spacedBy(12.dp)
